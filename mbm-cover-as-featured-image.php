@@ -48,16 +48,11 @@ if ( ! defined( 'MBDBCAFI_PLUGIN_FILE' ) ) {
 
 require 'includes/plugin-update-checker/plugin-update-checker.php';
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-	'https://github.com/user-name/repo-name/',
+	'https://github.com/christiespeich/mbm-cover-as-featured-image/',
 	__FILE__,
-	'unique-plugin-or-theme-slug'
+	'mbm-cover-as-featured-image'
 );
-
-//Optional: If you're using a private repository, specify the access token like this:
-$myUpdateChecker->setAuthentication('your-token-here');
-
-//Optional: Set the branch that contains the stable release.
-$myUpdateChecker->setBranch('stable-branch-name');
+$myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
 require_once dirname( __FILE__ ) . '/includes/helper_functions_updates.php';
 
