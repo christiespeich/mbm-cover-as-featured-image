@@ -6,7 +6,7 @@
   *  Author: Mooberry Dreams
   *  Author URI: http://www.mooberrydreams.com/
   *  Donate Link: https://www.paypal.me/mooberrydreams/
-  *	 Version: 1.0
+  *	 Version: 1.1
   *	 Text Domain: mbm-cover-as-featured-image
   *	 Domain Path: languages
   *
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 define('MBDBCAFI_PLUGIN_DIR', plugin_dir_path( __FILE__ )); 
 	define('MBDBCAFI_PLUGIN_VERSION_KEY', 'mbdbcafi_version');
-	define('MBDBCAFI_PLUGIN_VERSION', '1.0');
+	define('MBDBCAFI_PLUGIN_VERSION', '1.1');
 	
 	
 	
@@ -80,5 +80,24 @@ function mbdbcafi_use_cover_as_post_thumbnail( $html, $post_id ) {
 		}
 	}
 	return $html;
+}
+
+add_filter('has_post_thumbnail', 'mbdbcafi_has_post_thumbnail', 10, 2 );
+function mbdbcafi_has_post_thumbnail( $has_thumbnail, $post) {
+	if ( ! defined( 'MBDB_PLUGIN_VERSION' ) ) {
+		return $has_thumbnail;
+	}
+	if ( get_post_type( $post ) == 'mbdb_book' ) {
+		if ( is_object( $post ) ) {
+			$post_id = $post->ID;
+		} else {
+			$post_id = $post;
+		}
+		$book          = new Mooberry_Book_Manager_Book( $post_id );
+		$has_thumbnail = $book->has_cover();
+	}
+
+	return $has_thumbnail;
+
 }
 
