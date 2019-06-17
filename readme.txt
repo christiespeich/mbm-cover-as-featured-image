@@ -26,5 +26,8 @@ Be aware that your theme may use the featured image in the templates and affect 
 
 == Changelog ==
 
+= 1.1 =
+* Add has_post_thumbnail filter
+
 = 1.0 =
 * Initial
