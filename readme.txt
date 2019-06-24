@@ -26,6 +26,11 @@ Be aware that your theme may use the featured image in the templates and affect 
 
 == Changelog ==
 
+= 2.0 =
+* Set cover as thumbnail image explicitly on activation
+* Remove cover as thumbnail image on deactivation
+* Set cover as thumbnail image explicitly when upgrading to this version
+
 = 1.1 =
 * Add has_post_thumbnail filter
 
