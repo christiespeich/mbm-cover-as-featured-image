@@ -13,9 +13,18 @@ function mbdbcafi_update_versions() {
 	}
 
 
+	if ( version_compare( $current_version, '2.0', '<')) {
+		mbdbcafi_update_2_0();
+	}
 
 
 	// update database to the new version
 	update_option(MBDBCAFI_PLUGIN_VERSION_KEY, MBDBCAFI_PLUGIN_VERSION);
+
+}
+
+function mbdbcafi_update_2_0() {
+
+	mbdbcafi_set_all_attach_ids();
 
 }
