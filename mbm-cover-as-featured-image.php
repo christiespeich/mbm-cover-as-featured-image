@@ -6,7 +6,7 @@
  *  Author: Mooberry Dreams
  *  Author URI: http://www.mooberrydreams.com/
  *  Donate Link: https://www.paypal.me/mooberrydreams/
- *     Version: 2.0
+ *     Version: 2.1
  *     Text Domain: mbm-cover-as-featured-image
  *     Domain Path: languages
  *
@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'MBDBCAFI_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MBDBCAFI_PLUGIN_VERSION_KEY', 'mbdbcafi_version' );
-define( 'MBDBCAFI_PLUGIN_VERSION', '2.0' );
+define( 'MBDBCAFI_PLUGIN_VERSION', '2.1' );
 
 
 // Plugin Folder URL
@@ -55,6 +55,7 @@ $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
 );
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 
+require_once dirname( __FILE__ ) . '/includes/helper_functions.php';
 require_once dirname( __FILE__ ) . '/includes/helper_functions_updates.php';
 
 
@@ -62,44 +63,6 @@ require_once dirname( __FILE__ ) . '/includes/helper_functions_updates.php';
 add_action( 'plugins_loaded', 'mbdbcafi_plugins_loaded', 40 );
 function mbdbcafi_plugins_loaded() {
 //	load_plugin_textdomain( 'mbm-cover-as-featured-image', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-}
-
-function mbdbcafi_mbdb_installed() {
-	return defined( 'MBDB_PLUGIN_VERSION' );
-}
-
-function mbdbcafi_get_all_books() {
-	if ( ! mbdbcafi_mbdb_installed() ) {
-		return;
-	}
-	// update thumb ids for all current books
-	$books = get_posts( array(
-		'post_type'      => 'mbdb_book',
-		'posts_per_page' => - 1,
-	) );
-
-	return $books;
-}
-
-
-function mbdbcafi_set_all_attach_ids() {
-	$books = mbdbcafi_get_all_books();
-
-	foreach ( $books as $book ) {
-		$book_obj = MBDB()->book_factory->create_book( $book->ID );
-		if ( $book_obj->cover_id != null && $book_obj->cover_id != '' ) {
-			set_post_thumbnail( $book->ID, $book_obj->cover_id );
-		}
-	}
-}
-
-function mbdbcafi_remove_all_attach_ids() {
-	$books = mbdbcafi_get_all_books();
-
-	foreach ( $books as $book ) {
-		delete_post_thumbnail( $book->ID );
-	}
-
 }
 
 // set attach_ids on activation
@@ -112,4 +75,27 @@ function mbdbcafi_activate() {
 register_deactivation_hook( __FILE__, 'mbdbcafi_deactivate' );
 function mbdbcafi_deactivate() {
 	mbdbcafi_remove_all_attach_ids();
+}
+
+// set cover when a book is saved
+// priority 50 to run after MBM save_post
+add_action( 'save_post', 'mbdbcafi_save_book', 50 );
+function mbdbcafi_save_book( $book_id ) {
+	if ( ! mbdbcafi_mbdb_installed() ) {
+		return;
+	}
+
+	if ( get_post_type( $book_id ) != 'mbdb_book' ) {
+		return;
+	}
+
+	if ( isset( $_POST['_mbdb_cover_id']) ) {
+		if ( $_POST['_mbdb_cover_id'] != '' ) {
+			$cover_id = intval( $_POST['_mbdb_cover_id'] );
+			mbdbcafi_set_attach_id( $book_id, $cover_id );
+		} else {
+			mbdbcafi_remove_attach_id( $book_id );
+		}
+	}
+
 }

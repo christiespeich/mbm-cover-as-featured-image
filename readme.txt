@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/mooberrydreams/
 Tags: book, author, publisher, writer, writing, publishing, library, book store, author website management, book shop, sell books, link to Amazon
 Requires at least: 3.8.0
 Tested up to: 5.1
-Stable tag: 1.0
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,9 @@ Be aware that your theme may use the featured image in the templates and affect 
 
 
 == Changelog ==
+
+= 2.1 =
+* Fixed: update the featured image when book is saved
 
 = 2.0 =
 * Set cover as thumbnail image explicitly on activation
